@@ -1,0 +1,518 @@
+<title>אלט קונטרול · כניסות</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Assistant:wght@300;400&display=swap">
+<style>
+/* Option B: one opening screen (details on top, a big running title, a plain graphic circuit, the exercise names),
+   then vlog-like exercise pages. Ink on white, yellow only for the current. */
+:root{
+  --paper:#181818; --ink:#f2f2f2; --ink-2:#8a8a8a; --ink-3:#5c5c5c; --line:#2c2c2c; --current:#ffc400;
+  --body:"Heebo","Arial Hebrew",system-ui,sans-serif;
+  color-scheme:dark;
+}
+[hidden]{display:none!important}
+html,body{min-height:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+a{color:inherit}
+:focus-visible{outline:1.5px solid var(--ink);outline-offset:3px}
+
+/* ---------- HOME / OPENING ---------- */
+#home{--dk:#181818;--lt:#f2f2f2;--dim:#6e6e6e;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;text-align:center;
+  background:var(--dk);color:var(--lt);font-family:"Arbel","Assistant","Heebo",sans-serif}
+/* before the circuit is closed only the title and the circuit are there */
+#home:not(.on) .topbar,#home:not(.on) .pill,#home:not(.on) .works{display:none}
+#home.on .stage{display:none}
+#home.on .topbar,#home.on .pill,#home.on .works{animation:appear .9s ease both}
+#home.on .pill{animation-delay:.12s}
+#home.on .pill{animation-name:appear-dim}
+@keyframes appear-dim{from{opacity:0}to{opacity:.35}}
+#home.on .works{animation-delay:.32s}
+@keyframes appear{from{opacity:0;transform:translateY(10px)}}
+.stage.fly{transition:opacity .55s ease,transform .6s cubic-bezier(.5,0,.75,0);opacity:0;transform:translateY(-36px)}
+.pill{order:3;align-self:center;margin:0;padding:0 20px clamp(32px,6vh,56px);cursor:default;opacity:.35;white-space:normal!important;
+  font-weight:400;font-size:18px;line-height:1.1;letter-spacing:.02em;white-space:nowrap;color:var(--ink)}
+/* the title swaps between its three names with a short glitch */
+.pill .gl{display:inline-block}
+.pill .gl.swap{animation:glitch .42s steps(1) both}
+@keyframes glitch{
+  0%{transform:none;opacity:1}
+  12%{transform:translate(-4px,0) skewX(-10deg);opacity:.6;text-shadow:3px 0 var(--current)}
+  24%{transform:translate(3px,1px);opacity:.15}
+  36%{transform:translate(-2px,-1px) skewX(8deg);opacity:.9;text-shadow:-3px 0 var(--current)}
+  50%{transform:none;opacity:0}
+  62%{transform:translate(4px,0) skewX(-6deg);opacity:.7;text-shadow:3px 0 var(--current)}
+  76%{transform:translate(-2px,0);opacity:.3}
+  88%{transform:none;opacity:1;text-shadow:-2px 0 var(--current)}
+  100%{transform:none;opacity:1;text-shadow:none}}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;text-align:start;
+  padding:18px max(clamp(20px,4vw,48px),env(safe-area-inset-right,0px)) 18px max(clamp(20px,4vw,48px),env(safe-area-inset-left,0px));font-size:14px}
+.topbar .me{display:flex;gap:18px}
+.topbar a{text-decoration:none;color:var(--dim)}
+.topbar button{color:var(--dim)}
+.topbar a:hover,.topbar button:hover{color:var(--lt)}
+/* the circuit */
+.stage{flex:1;position:relative;min-height:180px}
+#art{position:absolute;inset:0;width:100%;height:100%;touch-action:none;user-select:none;-webkit-user-select:none;overflow:visible}
+#art .ln{fill:none;stroke:var(--lt);stroke-linecap:butt}
+#art .ly{fill:none;stroke:var(--current);stroke-linecap:butt;stroke-dasharray:1 1;stroke-dashoffset:1}
+#art .solid{fill:var(--lt);transition:fill .3s}
+#art .bare{fill:none;stroke:var(--lt);stroke-width:1.4;transition:stroke .3s}
+#art.lit-l #clip .solid{fill:var(--current)}
+#art.lit-r .bare{stroke:#e0aa00}
+#art.lit-r .cap{fill:var(--current)}
+#clip{cursor:grab}
+#art.dragging #clip{cursor:grabbing}
+#home.on #clip{cursor:default}
+#clipBtn{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+/* the micro:bit, in the same plain shapes as the clip */
+#mb{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(440px,84vw);height:auto;overflow:visible;user-select:none;-webkit-user-select:none}
+#mb .mb-ln{fill:none;stroke:var(--lt);stroke-width:2}
+#mb .mb-ln.thin{stroke-width:1;opacity:.5}
+#mb .mb-s{fill:var(--lt)}
+#mb text{fill:var(--lt);font:13px "Heebo",sans-serif}
+#mb .pad text{font-size:12px;opacity:.8}
+#mb .led{fill:#3a3a3a;transition:fill .12s}
+#mb .led.on{fill:#ff2a2a;filter:drop-shadow(0 0 5px rgba(255,42,42,.85))}
+#mb .mbt{cursor:pointer;outline:none}
+#mb .mbt rect{fill:transparent}
+#mb .mbt circle{transition:transform .1s ease,fill .15s;transform-box:fill-box;transform-origin:center}
+#mb .mbt:hover circle,#mb .mbt:focus-visible circle{fill:#fff}
+#mb .mbt.down circle{transform:scale(.78)}
+#mb.done .mbt{cursor:default}
+/* code blocks: put the piece into its slot */
+#bk{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(780px,92vw);height:auto;overflow:visible;user-select:none;-webkit-user-select:none;touch-action:none}
+#bk path{fill:transparent;stroke:var(--lt);stroke-width:2;stroke-linejoin:round;transition:fill .35s ease,stroke .35s ease}
+#bk #piece{cursor:grab;outline:none}
+#bk.dragging #piece{cursor:grabbing}
+#bk.done #piece{cursor:default}
+#bk #slot{stroke-dasharray:5 6;stroke-width:1.4;opacity:.45;fill:none;transition:opacity .2s}
+#bk.near #slot{opacity:.9}
+#bk.done #slot{opacity:0}
+#bk.c1 #cblock path{fill:#4c8ff6;stroke:#4c8ff6}
+#bk.c2 #piece path{fill:#48a2a7;stroke:#48a2a7}
+#bk #piece:focus-visible path{stroke-width:3}
+/* exercise names: grey until the circuit is closed */
+.works{order:2;list-style:none;margin:auto 0;padding:0 20px;display:flex;flex-direction:column;align-items:center;gap:6px;letter-spacing:.02em}
+.works a,.works span.w{display:inline-block;padding:2px 0;text-decoration:none;font-size:22px;line-height:1.2}
+.works a{color:var(--lt)}
+.works .off{color:var(--dim)}
+.works a .t::before,.works a .t::after{display:inline-block;opacity:0;transition:opacity .15s}
+.works a .t::before{content:"[";margin-inline-end:.35em}
+.works a .t::after{content:"]";margin-inline-start:.35em}
+.works a:hover .t::before,.works a:hover .t::after,.works a:focus-visible .t::before,.works a:focus-visible .t::after{opacity:1}
+.works a{margin-inline:-.9em}
+
+/* ---------- EXERCISE (vlog) ---------- */
+#ex{padding:0 0 120px}
+.exbar{font-size:12.5px!important;position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--paper) 92%,transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px max(clamp(20px,5vw,72px),env(safe-area-inset-right,0px)) 16px max(clamp(20px,5vw,72px),env(safe-area-inset-left,0px));font-size:14px}
+.exbar button{color:var(--ink)}
+.exbar button:hover{color:var(--ink-2)}
+.exbar .who{color:var(--ink-2)}
+.post{max-width:680px;margin:0 auto;padding:0 20px}
+.post .eyebrow{margin:clamp(56px,12vh,128px) 0 14px;font-size:12px;color:var(--ink-2)}
+.post h1{margin:0 0 36px;font-size:clamp(26px,3vw,38px);font-weight:600;line-height:1;letter-spacing:-.015em}
+.post .lede{font-size:14.5px;line-height:1.75;margin:0 0 72px;max-width:400px}
+.post h2{font-size:13.5px;font-weight:600;margin:112px 0 14px;line-height:1.3}
+.post p{margin:0 0 14px;font-size:13.5px;line-height:1.8}
+.post h2+div,.split>div{max-width:380px}
+.post ul{list-style:none;margin:16px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12.5px;color:var(--ink-2)}
+.post ul li.on{color:var(--ink)}
+.post ul li.on::before{content:"[ "}
+.post ul li.on::after{content:" ]"}
+.fig{--fw:100%;width:var(--fw);margin:56px auto 0}
+.fig img,.fig video{display:block;width:100%;height:auto;background:#222}
+.fig.tall{--fw:min(360px,100%)}
+.split{display:grid;grid-template-columns:minmax(0,1fr) 240px;gap:56px;align-items:center;margin-top:112px}
+.split h2{margin-top:0}
+.split .fig{margin:0}
+@media (max-width:600px){.split{grid-template-columns:1fr;gap:20px}.split .fig{width:min(300px,100%);margin:0 auto}}
+.fig figcaption{font-size:11.5px;color:var(--ink-2);margin-top:10px}
+.rv{opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.8,.3,1)}
+.rv.in{opacity:1;transform:none}
+.contact .lbl{display:inline-block;min-width:64px;color:var(--ink-2)}
+.contact a{text-decoration:none}
+.contact a:hover{text-decoration:underline}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-delay:0ms!important;transition-duration:.01ms!important}
+  .rv{opacity:1;transform:none}
+}
+</style>
+
+<div id="site" dir="rtl">
+  <section id="home" aria-label="אלט קונטרול · תיק עבודות · ידידיה דון">
+    <div class="topbar"><button id="relock" type="button">לנתק את המעגל</button><span class="me"><span>ידידיה דון</span><a href="#contact" id="contact">צור קשר</a></span></div>
+    <h1 class="pill"><span class="gl">תיק עבודות · ידידיה דון · אלט קונטרול</span></h1>
+    <div class="stage">
+      <svg id="art" role="img" aria-label="שני חוטים: גוררים את התפס אל החוט החשוף ועוזבים כדי לסגור את המעגל">
+        <line id="Lb" class="ln"/><line id="Ly" class="ly" pathLength="1"/>
+        <line id="Rb" class="ln"/><line id="Ry" class="ly" pathLength="1"/>
+        <line id="bare" class="bare"/><rect id="cap" class="solid cap"/>
+        <g id="clip">
+          <rect x="-20" y="-60" width="160" height="120" fill="transparent"/>
+          <rect class="solid" x="0" y="-8" width="54" height="16" rx="1.5"/>
+          <path id="jawU" class="solid" d="M58 -8 L122 -0.8 L58 -2.2 Z"/>
+          <path id="jawL" class="solid" d="M58 8 L122 0.8 L58 2.2 Z"/>
+        </g>
+      </svg>
+      <svg id="mb" viewBox="0 0 420 266" role="img" aria-label="מיקרו:ביט: לוחצים על אחד הכפתורים כדי להדליק את האורות ולהיכנס" hidden>
+        <rect class="mb-s" x="190" y="8" width="40" height="14" rx="3"/>
+        <rect class="mb-ln" x="20" y="20" width="380" height="226" rx="24"/>
+        <rect class="mb-ln" x="176" y="42" width="68" height="32" rx="16"/>
+        <circle class="mb-s" cx="196" cy="58" r="5"/><circle class="mb-s" cx="224" cy="58" r="5"/>
+        <g id="leds"></g>
+        <g class="mbt" data-b="A" tabindex="0" role="button" aria-label="כפתור A">
+          <rect class="mb-ln" x="58" y="133" width="44" height="44" rx="5"/><circle class="mb-s" cx="80" cy="155" r="13"/>
+          <text x="80" y="204" text-anchor="middle">A</text>
+        </g>
+        <g class="mbt" data-b="B" tabindex="0" role="button" aria-label="כפתור B">
+          <rect class="mb-ln" x="318" y="133" width="44" height="44" rx="5"/><circle class="mb-s" cx="340" cy="155" r="13"/>
+          <text x="340" y="204" text-anchor="middle">B</text>
+        </g>
+      </svg>
+      <svg id="bk" role="img" aria-label="בלוקים: גוררים את החלק אל המקום שלו בתוך הבלוק" hidden>
+        <g id="cblock"><path d="M4 0 H16 l6 6 h18 l6 -6 H216 a4 4 0 0 1 4 4 V40 a4 4 0 0 1 -4 4 H66 l-6 6 h-18 l-6 -6 H24 a4 4 0 0 0 -4 4 V84 a4 4 0 0 0 4 4 H216 a4 4 0 0 1 4 4 V112 a4 4 0 0 1 -4 4 H46 l-6 6 h-18 l-6 -6 H4 a4 4 0 0 1 -4 -4 V4 a4 4 0 0 1 4 -4 Z"/></g>
+        <path id="slot" d="M4 0 H16 l6 6 h18 l6 -6 H146 a4 4 0 0 1 4 4 V40 a4 4 0 0 1 -4 4 H4 a4 4 0 0 1 -4 -4 V4 a4 4 0 0 1 4 -4 Z"/>
+        <g id="piece" tabindex="0" role="button" aria-label="החלק"><rect x="-14" y="-14" width="178" height="72" fill="transparent"/><path d="M4 0 H16 l6 6 h18 l6 -6 H146 a4 4 0 0 1 4 4 V40 a4 4 0 0 1 -4 4 H4 a4 4 0 0 1 -4 -4 V4 a4 4 0 0 1 4 -4 Z"/></g>
+      </svg>
+      <button id="clipBtn" type="button">סגירת המעגל</button>
+    </div>
+    <ul class="works" id="works"></ul>
+  </section>
+
+  <article id="ex" hidden>
+    <div class="exbar"><button id="back" type="button">→ עבודות</button><span class="who">אלט קונטרול · ידידיה דון</span></div>
+    <div class="post" id="post"></div>
+  </article>
+
+  <article id="ct" hidden aria-labelledby="ctTitle">
+    <div class="exbar"><button id="ctBack" type="button">→ עבודות</button><span class="who">אלט קונטרול · ידידיה דון</span></div>
+    <div class="post contact">
+      <p class="eyebrow">צור קשר</p>
+      <p id="ctTitle"><span class="lbl">שם</span>ידידיה דון</p>
+      <p><span class="lbl">טלפון</span><a href="tel:+972525457817">052-5457817</a></p>
+      <p><span class="lbl">מייל</span><a href="mailto:bigdidon@gmail.com">bigdidon@gmail.com</a></p>
+    </div>
+  </article>
+</div>
+
+<script>
+(() => {
+const $ = (s) => document.querySelector(s);
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* =================== content =================== */
+const EX = [
+  {n:'01', title:'פעמון דלת', kind:'תרגיל 1', cover:'media/img_6144_v.jpg', sections:[
+    {h:'פעמון דלת', head:true, html:`<p>הפעמון, לרוב, יוצר מפגש שהוא בקשה.<br>בקשה לכניסה, בקשת רשות, עדכון שאני כאן.<br>אבל מה קורה כשהבקשה הופכת לכניסה עצמאית, כזו שלא מחכה לרשות ופולשת אל תוך מרחב אישי?</p>`,
+      media:{img:'media/img_6144.jpg', alt:'תיק מחשב אפור, מנעול נעול על הרוכסן והמפתח לידו'}},
+    {h:'הבריף', html:`<p>פעמון דלת הוא מבנה של input/output בצורתו הבסיסית: מפסק בצד של האורח, ומנגנון שמודיע על ההגעה בצד של המארח. המשימה הייתה להמציא, לעצב ולבנות פעמון כניסה ייחודי, ולחשוב מה הוא אומר על המפגש בין השניים.</p>`},
+    {h:'נקודת המוצא', html:`<p>התחלתי מלחפש מפגשים פיזיים בין שני חלקים שגורמים למשהו לקרות: מפתח שמתניע רכב, קליק של עכבר, צעד על הרצפה. משם עברתי לחפצים שמוליכים חשמל ונפגשים ונפרדים:</p>
+      <ul><li>סכין ומזלג על צלחת</li><li class="on">מפתח ומנעול</li><li>אבזם של חגורה</li><li>פין להוצאת סים</li><li>מטבע בקופת צדקה</li><li>מגנט על המקרר</li><li>השקיית עציצים</li><li>כפתורי קליפס</li></ul>`,
+      media:{img:'media/img_6137.jpg', alt:'המנעול והמפתח מחוברים בכבלי תנין'}},
+    {h:'ניסוי ראשון: המפתח הוא המפסק', html:`<p>המפתח והמנעול עשויים מתכת, ולכן הם מוליכים חשמל. חיברתי כבל תנין אחד למפתח ואחד למנעול. כשהמפתח נכנס לחור, שתי המתכות נוגעות, המעגל נסגר ונורת ה-LED נדלקת.</p>`,
+      media:{video:'media/key-test-wide.mp4', poster:'media/key-test-wide.jpg', loop:true, cap:'המפתח נכנס למנעול והנורה נדלקת'}},
+    {h:'מה נעול?', html:`<p>מנעול לבד הוא רק מפסק. כדי שיהיה לו סיפור הוא צריך לנעול משהו. בחרתי בתיק המחשב שלי, משהו ערכי שחשוב לי לשמור עליו. ככה הנגיעה של המפתח בחור הופכת לבקשה להיכנס. כדי שהמנעול באמת יסגור את הרוכסן, השחלתי טבעת דרך הלשוניות שלו.</p>`},
+    {h:'ההגשה', html:`<p>התיק מוצב על שולחן בכיתה, והאורח מכניס את המפתח למנעול.</p>`,
+      media:{video:'media/presentation.mp4', poster:'media/presentation.jpg', cap:'ההצגה בכיתה'}}
+  ]},
+  {n:'02', title:'סיכת דש', kind:'בקרוב'},
+  {n:'03', title:'תרגיל 3', kind:'בקרוב'},
+  {n:'04', title:'תרגיל סיום', kind:'בקרוב'}
+];
+
+/* =================== circuit =================== */
+const site = $('#site'), home = $('#home'), ex = $('#ex'), post = $('#post');
+const art = $('#art'), clip = $('#clip'), P = (id) => document.getElementById(id);
+const LEN = 122;                       // clip length, in clip units
+let W, H, k, y0, A, E0, R, WT, end, dir = {x:1, y:0}, drag = null, done = false, springing = false, actx = null, idleT0 = performance.now();
+const set = (el, o) => { for (const n in o) el.setAttribute(n, o[n]); };
+
+function jaws(open){ const a = open ? 15 : 0; P('jawU').setAttribute('transform', `rotate(${-a} 58 -4)`); P('jawL').setAttribute('transform', `rotate(${a} 58 4)`); }
+function layout(){
+  const r = art.getBoundingClientRect(); if (!r.width) return; W = r.width; H = r.height;
+  art.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  k = Math.max(.75, Math.min(1.3, W / 1100)); y0 = H / 2;
+  A  = {x: -10, y: y0};
+  E0 = {x: W * (W < 600 ? .16 : .30), y: y0};
+  R  = {x: W * (W < 600 ? .78 : .64), y: y0};
+  WT = {x: R.x - 44 * k, y: y0};
+  if (!drag && !done && !springing) end = {...E0};
+  const sw = Math.max(2.5, 3 * k);
+  for (const id of ['Lb','Ly','Rb','Ry']) P(id).style.strokeWidth = sw;
+  set(P('Rb'), {x1: W + 10, y1: y0, x2: R.x, y2: y0}); set(P('Ry'), {x1: W + 10, y1: y0, x2: R.x, y2: y0});
+  set(P('cap'), {x: R.x - 9 * k, y: y0 - 6 * k, width: 9 * k, height: 12 * k});
+  set(P('bare'), {x1: R.x - 9 * k, y1: y0, x2: WT.x, y2: y0});
+  if (done) { const t = target(); end = t.e; }
+  draw();
+}
+function target(){ return {e: {x: WT.x + 16 * k - LEN * k, y: y0}, d: {x:1, y:0}}; }
+function draw(){
+  if (!A || !end) return;
+  set(P('Lb'), {x1: A.x, y1: A.y, x2: end.x, y2: end.y}); set(P('Ly'), {x1: A.x, y1: A.y, x2: end.x, y2: end.y});
+  clip.setAttribute('transform', `translate(${end.x} ${end.y}) rotate(${Math.atan2(dir.y, dir.x) * 180 / Math.PI}) scale(${k})`);
+}
+function aim(){ const dx = end.x - A.x, dy = end.y - A.y, d = Math.hypot(dx, dy) || 1; dir = {x: dx / d, y: dy / d}; }
+function loop(now){
+  if (E0 && !drag && !done && !springing) {
+    const ph = ((now - idleT0) % 3000) / 3000, b = ph > .74 && ph < .9 ? Math.sin((ph - .74) / .16 * Math.PI) : 0;
+    end = {x: E0.x + b * 12 * k, y: y0}; dir = {x:1, y:0}; draw();
+  }
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+function pt(e){ const r = art.getBoundingClientRect(); return {x: e.clientX - r.left, y: e.clientY - r.top}; }
+function nearWire(){
+  const t = {x: end.x + dir.x * LEN * k, y: end.y + dir.y * LEN * k};
+  const x = Math.max(WT.x - 40 * k, Math.min(R.x + 20 * k, t.x));
+  return Math.hypot(t.x - x, t.y - y0) < 60 * k;
+}
+clip.addEventListener('pointerdown', (e) => {
+  if (done) return; const p = pt(e);
+  try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); actx.resume(); } catch(_) {}
+  drag = {dx: p.x - end.x, dy: p.y - end.y}; art.setPointerCapture(e.pointerId); art.classList.add('dragging'); jaws(true); e.preventDefault();
+});
+art.addEventListener('pointermove', (e) => {
+  if (!drag) return; const p = pt(e), r = art.getBoundingClientRect();
+  end = {x: Math.max(20, Math.min(W - 20, p.x - drag.dx)), y: Math.max(-r.top + 20, Math.min(innerHeight - r.top - 20, p.y - drag.dy))};
+  aim(); draw();
+});
+function release(){ if (!drag) return; const ok = nearWire(); drag = null; art.classList.remove('dragging'); jaws(false); ok ? connect() : springBack(); }
+art.addEventListener('pointerup', release);
+art.addEventListener('pointercancel', release);
+$('#clipBtn').addEventListener('click', () => { if (way === 'mb') press(mb.querySelector('.mbt')); else if (way === 'blocks') snap(); else if (!done) connect(); });
+
+function tweenEnd(toEnd, toDir, dur, cb){
+  const fe = {...end}, fd = {...dir}, t0 = performance.now(); springing = true;
+  (function step(now){
+    const q = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - q, 3);
+    end = {x: fe.x + (toEnd.x - fe.x) * e, y: fe.y + (toEnd.y - fe.y) * e};
+    const dx = fd.x + (toDir.x - fd.x) * e, dy = fd.y + (toDir.y - fd.y) * e, l = Math.hypot(dx, dy); dir = {x: dx / l, y: dy / l};
+    draw(); if (q < 1) requestAnimationFrame(step); else { springing = false; cb && cb(); }
+  })(t0);
+}
+function springBack(){ tweenEnd(E0, {x:1, y:0}, reduce ? 1 : 480, () => { idleT0 = performance.now(); }); }
+function click(){
+  if (!actx) return;
+  try {   // a soft, muted "tk-thup" (synthesised)
+    const t = actx.currentTime, out = actx.createGain(), lp = actx.createBiquadFilter();
+    lp.type = 'lowpass'; lp.frequency.value = 5200; out.gain.value = .45; out.connect(lp); lp.connect(actx.destination);
+    const env = (g, t0, a, peak, dec) => { g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(peak, t0 + a); g.gain.exponentialRampToValueAtTime(.0008, t0 + a + dec); };
+    const n = Math.round(actx.sampleRate * .01), buf = actx.createBuffer(1, n, actx.sampleRate), d = buf.getChannelData(0);
+    for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 3);
+    const src = actx.createBufferSource(), bp = actx.createBiquadFilter(), ng = actx.createGain();
+    src.buffer = buf; bp.type = 'bandpass'; bp.frequency.value = 3000; bp.Q.value = 1.1; ng.gain.value = .16;
+    src.connect(bp); bp.connect(ng); ng.connect(out); src.start(t);
+    const o = actx.createOscillator(), og = actx.createGain(), t1 = t + .007;
+    o.type = 'sine'; o.frequency.setValueAtTime(190, t1); o.frequency.exponentialRampToValueAtTime(85, t1 + .05);
+    env(og, t1, .003, .42, .07); o.connect(og); og.connect(out); o.start(t1); o.stop(t1 + .09);
+    const h = actx.createOscillator(), hg = actx.createGain();
+    h.type = 'sine'; h.frequency.setValueAtTime(1150, t1); h.frequency.exponentialRampToValueAtTime(900, t1 + .03);
+    env(hg, t1, .002, .05, .035); h.connect(hg); hg.connect(out); h.start(t1); h.stop(t1 + .05);
+  } catch(_) {}
+}
+function run(el, dur){
+  return new Promise(res => { const t0 = performance.now();
+    (function step(now){ const q = Math.min(1, (now - t0) / dur), e = q * q * (3 - 2 * q); el.style.strokeDashoffset = 1 - e;
+      if (q < 1) requestAnimationFrame(step); else res(); })(t0); });
+}
+function connect(){
+  if (done) return; done = true; drag = null;
+  const t = target();
+  tweenEnd(t.e, t.d, reduce ? 1 : 150, async () => {
+    click(); art.setAttribute('aria-label', 'המעגל נסגר');
+    await run(P('Ly'), reduce ? 1 : 460); art.classList.add('lit-l');
+    art.classList.add('lit-r'); await run(P('Ry'), reduce ? 1 : 360);
+    openSite();
+  });
+}
+// whatever unlocked it has done its job: it flies off, then the site appears
+async function openSite(){
+  await new Promise(r => setTimeout(r, reduce ? 0 : 280));
+  $('.stage').classList.add('fly');
+  await new Promise(r => setTimeout(r, reduce ? 0 : 620));
+  home.classList.add('on');
+}
+
+/* =================== micro:bit =================== */
+const mb = $('#mb');
+const LX = [150, 180, 210, 240, 270], LY = [95, 125, 155, 185, 215];
+$('#leds').innerHTML = LY.map((y, r) => LX.map((x, c) => `<rect class="led" data-r="${r}" data-c="${c}" x="${x - 4}" y="${y - 8}" width="8" height="16" rx="1.5"/>`).join('')).join('');
+let mbDone = false;
+async function press(btn){
+  if (mbDone) return; mbDone = true; mb.classList.add('done');
+  try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); actx.resume(); } catch(_) {}
+  btn.classList.add('down'); click(); setTimeout(() => btn.classList.remove('down'), 140);
+  mb.setAttribute('aria-label', 'האורות נדלקו');
+  // the lights come on in a diagonal sweep, starting from the pressed side
+  const leds = [...mb.querySelectorAll('.led')], fromA = btn.dataset.b === 'A';
+  const order = leds.map(l => ({l, d: +l.dataset.r + (fromA ? +l.dataset.c : 4 - +l.dataset.c)}));
+  for (let d = 0; d <= 8; d++) {
+    order.filter(o => o.d === d).forEach(o => o.l.classList.add('on'));
+    await new Promise(r => setTimeout(r, reduce ? 0 : 70));
+  }
+  await new Promise(r => setTimeout(r, reduce ? 0 : 260));
+  openSite();
+}
+mb.querySelectorAll('.mbt').forEach(b => {
+  b.addEventListener('click', () => press(b));
+  b.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); press(b); } });
+});
+
+/* =================== blocks =================== */
+const bk = $('#bk'), piece = $('#piece');
+let BL, bp, brot = 0, bDrag = null, bDone = false, bSpring = false, bIdle0 = performance.now();
+function bLayout(){
+  const narrow = innerWidth < 820;
+  // C block is 220x116; the piece (150x44) sits in its mouth at (+20,+44)
+  BL = narrow ? {vb:[0,0,320,360], C:{x:50,y:119}, home:{x:85,y:290}, rot:-5}
+              : {vb:[0,0,640,260], C:{x:210,y:69}, home:{x:-50,y:110}, rot:-6};
+  bk.setAttribute('viewBox', BL.vb.join(' '));
+  bk.style.width = narrow ? 'min(360px,90vw)' : 'min(780px,92vw)';
+  $('#cblock').setAttribute('transform', `translate(${BL.C.x} ${BL.C.y})`);
+  BL.T = {x: BL.C.x + 20, y: BL.C.y + 44};
+  $('#slot').setAttribute('transform', `translate(${BL.T.x} ${BL.T.y})`);
+  if (!bDrag && !bSpring) { bp = bDone ? {...BL.T} : {...BL.home}; brot = bDone ? 0 : BL.rot; }
+  bDraw();
+}
+function bDraw(){ piece.setAttribute('transform', `translate(${bp.x} ${bp.y}) rotate(${brot} 75 22)`); }
+function bPt(e){ const m = bk.getScreenCTM().inverse(), q = new DOMPoint(e.clientX, e.clientY).matrixTransform(m); return {x: q.x, y: q.y}; }
+const bNear = () => Math.hypot(bp.x - BL.T.x, bp.y - BL.T.y) < 46;
+function bTween(to, rot, dur, cb){
+  const f = {...bp}, fr = brot, t0 = performance.now(); bSpring = true;
+  (function step(now){ const q = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - q, 3);
+    bp = {x: f.x + (to.x - f.x) * e, y: f.y + (to.y - f.y) * e}; brot = fr + (rot - fr) * e; bDraw();
+    if (q < 1) requestAnimationFrame(step); else { bSpring = false; cb && cb(); } })(t0);
+}
+function bLoop(now){
+  if (way === 'blocks' && BL && !bDrag && !bDone && !bSpring) {
+    const ph = ((now - bIdle0) % 3200) / 3200, b = ph > .72 && ph < .9 ? Math.sin((ph - .72) / .18 * Math.PI) : 0;
+    const dx = BL.T.x - BL.home.x, dy = BL.T.y - BL.home.y, d = Math.hypot(dx, dy);
+    bp = {x: BL.home.x + dx / d * b * 12, y: BL.home.y + dy / d * b * 12}; brot = BL.rot; bDraw();
+  }
+  requestAnimationFrame(bLoop);
+}
+requestAnimationFrame(bLoop);
+piece.addEventListener('pointerdown', (e) => {
+  if (bDone || bSpring) return; const p = bPt(e);
+  try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); actx.resume(); } catch(_) {}
+  bDrag = {dx: p.x - bp.x, dy: p.y - bp.y}; bk.setPointerCapture(e.pointerId); bk.classList.add('dragging'); e.preventDefault();
+});
+bk.addEventListener('pointermove', (e) => {
+  if (!bDrag) return; const p = bPt(e);
+  bp = {x: p.x - bDrag.dx, y: p.y - bDrag.dy}; brot = BL.rot * Math.min(1, Math.hypot(bp.x - BL.T.x, bp.y - BL.T.y) / 120);
+  bk.classList.toggle('near', bNear()); bDraw();
+});
+function bRelease(){
+  if (!bDrag) return; bDrag = null; bk.classList.remove('dragging', 'near');
+  bNear() ? snap() : bTween(BL.home, BL.rot, reduce ? 1 : 480, () => { bIdle0 = performance.now(); });
+}
+bk.addEventListener('pointerup', bRelease);
+bk.addEventListener('pointercancel', bRelease);
+piece.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); snap(); } });
+function snap(){
+  if (bDone) return; bDone = true; bk.classList.add('done');
+  try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); actx.resume(); } catch(_) {}
+  bTween(BL.T, 0, reduce ? 1 : 140, async () => {
+    click(); bk.setAttribute('aria-label', 'החלק נכנס למקום');
+    await new Promise(r => setTimeout(r, reduce ? 0 : 160)); bk.classList.add('c1');
+    await new Promise(r => setTimeout(r, reduce ? 0 : 220)); bk.classList.add('c2');
+    await new Promise(r => setTimeout(r, reduce ? 0 : 420));
+    openSite();
+  });
+}
+addEventListener('resize', () => { if (way === 'blocks') bLayout(); });
+
+/* =================== which way in =================== */
+// each visit opens the site through a different thing from the course
+const WAYS = ['clip', 'mb', 'blocks'];
+let way = new URLSearchParams(location.search).get('unlock');
+if (!WAYS.includes(way)) way = WAYS[Math.floor(Math.random() * WAYS.length)];
+function useWay(w){
+  way = w; art.toggleAttribute('hidden', w !== 'clip'); mb.toggleAttribute('hidden', w !== 'mb'); bk.toggleAttribute('hidden', w !== 'blocks');
+  $('#clipBtn').textContent = {clip: 'סגירת המעגל', mb: 'לחיצה על הכפתור', blocks: 'הכנסת החלק למקום'}[w];
+  if (w === 'clip') requestAnimationFrame(layout);
+  if (w === 'blocks') bLayout();
+}
+useWay(way);
+$('#relock').addEventListener('click', () => {
+  bDone = false; bk.classList.remove('done', 'c1', 'c2'); bIdle0 = performance.now();
+  bk.setAttribute('aria-label', 'בלוקים: גוררים את החלק אל המקום שלו בתוך הבלוק');
+  mbDone = false; mb.classList.remove('done'); mb.querySelectorAll('.led').forEach(l => l.classList.remove('on'));
+  mb.setAttribute('aria-label', 'מיקרו:ביט: לוחצים על אחד הכפתורים כדי להדליק את האורות ולהיכנס');
+  done = false; home.classList.remove('on'); $('.stage').classList.remove('fly'); art.classList.remove('lit-l', 'lit-r');
+  useWay(WAYS[(WAYS.indexOf(way) + 1) % WAYS.length]);
+  scrollTo(0, 0); layout(); end = {...E0}; dir = {x:1, y:0}; draw();
+  P('Ly').style.strokeDashoffset = 1; P('Ry').style.strokeDashoffset = 1;
+  art.setAttribute('aria-label', 'שני חוטים: גוררים את התפס אל החוט החשוף ועוזבים כדי לסגור את המעגל');
+  springBack();
+});
+
+/* =================== title cycle =================== */
+const NAMES = ['אלט קונטרול', 'ידידיה דון', 'תיק עבודות'];
+let ni = 0, cur = NAMES[0];
+const gl = $('.pill .gl');
+// like a split-flap board: the letters turn into running digits, then the new name settles in, in reading order
+function scramble(to){
+  const n = Math.max(cur.length, to.length), FR = 24, HOLD = 7; let f = 0;
+  const rnd = () => String(Math.floor(Math.random() * 10));
+  (function tick(){
+    f++;
+    const k = f <= HOLD ? 0 : Math.ceil((f - HOLD) / (FR - HOLD) * to.length);
+    let out = '';
+    for (let i = 0; i < n; i++) {
+      if (i < k) out += to[i] || '';
+      else if (f <= 2 && i < cur.length && Math.random() < .5) out += cur[i];
+      else if (i < Math.max(to.length, f <= HOLD ? cur.length : to.length)) out += (to[i] === ' ' && f > HOLD) ? ' ' : rnd();
+    }
+    gl.textContent = out;
+    if (f < FR) setTimeout(tick, 38); else { gl.textContent = to; cur = to; }
+  })();
+}
+// (the title no longer cycles: it sits as one quiet line at the bottom)
+
+/* =================== site =================== */
+$('#works').innerHTML = EX.map((x, i) => x.sections
+  ? `<li><a href="#ex-${i}" data-i="${i}"><span class="t">${x.title}</span></a></li>`
+  : `<li><span class="w off"><span class="t">${x.title}</span></span></li>`).join('');
+$('#works').addEventListener('click', (e) => { const a = e.target.closest('a[data-i]'); if (a) { e.preventDefault(); openEx(+a.dataset.i); } });
+
+function media(m){
+  if (!m) return '';
+  if (m.img) return `<figure class="fig rv"><img src="${m.img}" alt="${m.alt || ''}" loading="lazy"></figure>`;
+  return `<figure class="fig rv ${m.tall ? 'tall' : ''}"><video src="${m.video}" poster="${m.poster}" playsinline preload="metadata" controls ${m.loop ? 'muted loop' : ''}></video>${m.cap ? `<figcaption>${m.cap}</figcaption>` : ''}</figure>`;
+}
+let io;
+function openEx(i){
+  const x = EX[i], [head, ...rest] = x.sections;
+  post.innerHTML = `<p class="eyebrow">${x.kind}</p><h1>${x.title}</h1><div class="lede">${head.html}</div>${media(head.media)}`
+    + rest.map(s => s.media && s.media.side
+      ? `<div class="split"><div class="rv"><h2>${s.h}</h2>${s.html}</div>${media(s.media)}</div>`
+      : `<h2 class="rv">${s.h}</h2><div class="rv">${s.html}</div>${media(s.media)}`).join('');
+  home.hidden = true; ex.hidden = false; scrollTo(0, 0);
+  io && io.disconnect();
+  io = new IntersectionObserver((es) => es.forEach(en => {
+    if (en.isIntersecting) en.target.classList.add('in');
+    const v = en.target.querySelector && en.target.querySelector('video[loop]');
+    if (v) en.isIntersecting ? v.play().catch(() => {}) : v.pause();
+  }), {threshold: .15});
+  post.querySelectorAll('.rv').forEach(el => io.observe(el));
+}
+function closeEx(){
+  post.querySelectorAll('video').forEach(v => v.pause());
+  ex.hidden = true; home.hidden = false; scrollTo(0, 0); layout();
+}
+$('#back').addEventListener('click', closeEx);
+const ct = $('#ct');
+$('#contact').addEventListener('click', (e) => { e.preventDefault(); home.hidden = true; ct.hidden = false; scrollTo(0, 0); });
+function closeCt(){ ct.hidden = true; home.hidden = false; scrollTo(0, 0); layout(); }
+$('#ctBack').addEventListener('click', closeCt);
+document.addEventListener('keydown', (e) => { if (e.key !== 'Escape') return; if (!ex.hidden) closeEx(); else if (!ct.hidden) closeCt(); });
+
+addEventListener('resize', layout);
+layout();
+})();
+</script>
