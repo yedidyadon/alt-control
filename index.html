@@ -210,7 +210,7 @@ const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* =================== content =================== */
 const EX = [
-  {n:'01', title:'פעמון דלת', kind:'תרגיל 1', cover:'media/img_6144_v.jpg', sections:[
+  {n:'01', slug:'doorbell', title:'פעמון דלת', kind:'תרגיל 1', cover:'media/img_6144_v.jpg', sections:[
     {h:'פעמון דלת', head:true, html:`<p>הפעמון, לרוב, יוצר מפגש שהוא בקשה.<br>בקשה לכניסה, בקשת רשות, עדכון שאני כאן.<br>אבל מה קורה כשהבקשה הופכת לכניסה עצמאית, כזו שלא מחכה לרשות ופולשת אל תוך מרחב אישי?</p>`,
       media:{img:'media/img_6144.jpg', alt:'תיק מחשב אפור, מנעול נעול על הרוכסן והמפתח לידו'}},
     {h:'הבריף', html:`<p>פעמון דלת הוא מבנה של input/output בצורתו הבסיסית: מפסק בצד של האורח, ומנגנון שמודיע על ההגעה בצד של המארח. המשימה הייתה להמציא, לעצב ולבנות פעמון כניסה ייחודי, ולחשוב מה הוא אומר על המפגש בין השניים.</p>`},
@@ -481,7 +481,7 @@ function scramble(to){
 
 /* =================== site =================== */
 $('#works').innerHTML = EX.map((x, i) => x.sections
-  ? `<li><a href="#ex-${i}" data-i="${i}"><span class="t">${x.title}</span></a></li>`
+  ? `<li><a href="#${x.slug}" data-i="${i}"><span class="t">${x.title}</span></a></li>`
   : `<li><span class="w off"><span class="t">${x.title}</span></span></li>`).join('');
 $('#works').addEventListener('click', (e) => { const a = e.target.closest('a[data-i]'); if (a) { e.preventDefault(); openEx(+a.dataset.i); } });
 
@@ -497,7 +497,8 @@ function openEx(i){
     + rest.map(s => s.media && s.media.side
       ? `<div class="split"><div class="rv"><h2>${s.h}</h2>${s.html}</div>${media(s.media)}</div>`
       : `<h2 class="rv">${s.h}</h2><div class="rv">${s.html}</div>${media(s.media)}`).join('');
-  home.hidden = true; ex.hidden = false; scrollTo(0, 0);
+  home.hidden = true; ct.hidden = true; ex.hidden = false; scrollTo(0, 0);
+  setHash(x.slug);
   io && io.disconnect();
   io = new IntersectionObserver((es) => es.forEach(en => {
     if (en.isIntersecting) en.target.classList.add('in');
@@ -509,15 +510,42 @@ function openEx(i){
 function closeEx(){
   post.querySelectorAll('video').forEach(v => v.pause());
   ex.hidden = true; home.hidden = false; scrollTo(0, 0); layout();
+  setHash('');
 }
 $('#back').addEventListener('click', closeEx);
 const ct = $('#ct');
-$('#contact').addEventListener('click', (e) => { e.preventDefault(); home.hidden = true; ct.hidden = false; scrollTo(0, 0); });
-function closeCt(){ ct.hidden = true; home.hidden = false; scrollTo(0, 0); layout(); }
+function openCt(){ home.hidden = true; ex.hidden = true; ct.hidden = false; scrollTo(0, 0); setHash('contact'); }
+$('#contact').addEventListener('click', (e) => { e.preventDefault(); openCt(); });
+function closeCt(){ ct.hidden = true; home.hidden = false; scrollTo(0, 0); layout(); setHash(''); }
 $('#ctBack').addEventListener('click', closeCt);
 document.addEventListener('keydown', (e) => { if (e.key !== 'Escape') return; if (!ex.hidden) closeEx(); else if (!ct.hidden) closeCt(); });
 
+/* =================== direct links (#doorbell, #contact) =================== */
+// each page has its own address, so a link can skip the opening and land right on it
+function setHash(h){
+  const want = h ? '#' + h : '';
+  if (location.hash === want) return;
+  history.pushState(null, '', want || location.pathname + location.search);
+}
+// arriving by a direct link: skip the unlock, so going back shows the list right away
+function skipIntro(){
+  done = true; mbDone = true; bDone = true;
+  $('.stage').classList.add('fly'); home.classList.add('on');
+}
+function route(){
+  const h = decodeURIComponent(location.hash.slice(1));
+  const i = EX.findIndex(x => x.slug && x.slug === h);
+  if (i > -1) { skipIntro(); openEx(i); }
+  else if (h === 'contact') { skipIntro(); openCt(); }
+  else {
+    if (!ex.hidden) { post.querySelectorAll('video').forEach(v => v.pause()); ex.hidden = true; }
+    ct.hidden = true; home.hidden = false; layout();
+  }
+}
+addEventListener('popstate', route);
+
 addEventListener('resize', layout);
 layout();
+if (location.hash) route();
 })();
 </script>
