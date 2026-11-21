@@ -134,6 +134,33 @@ a{color:inherit}
 .split .fig{margin:0}
 @media (max-width:600px){.split{grid-template-columns:1fr;gap:20px}.split .fig{width:min(300px,100%);margin:0 auto}}
 .fig figcaption{font-size:11.5px;color:var(--ink-2);margin-top:10px}
+.fig.tall img{width:100%}
+.post .fig.tall{margin-inline:0 auto}
+/* exercise 2 adds: rows of pictures, a side note beside them, code, numbered headings */
+.row{display:grid;grid-template-columns:repeat(var(--n,2),minmax(0,1fr));gap:12px;align-items:start;
+  width:100%;margin:56px 0 0}
+.row .fig{margin:0;width:100%}
+.row img{aspect-ratio:3/4;object-fit:cover}
+.row.land img{aspect-ratio:4/3}
+.row.v img,.row.v video{aspect-ratio:9/16;object-fit:cover}
+.row.snug{width:100%;margin-inline:0;margin-top:12px}
+.row.noted{grid-template-columns:repeat(var(--n,2),minmax(0,1fr)) 170px}
+.row .rowcap{grid-column:1/-1;font-size:11.5px;color:var(--ink-2);margin:-2px 0 0}
+.row .note{font-size:12px;line-height:1.75;color:var(--ink-2);margin:0;align-self:end}
+@media (max-width:600px){.row{gap:8px}.row.noted{grid-template-columns:repeat(var(--n,2),minmax(0,1fr))}.row .note{grid-column:1/-1}}
+.post h2 .no{display:inline-block;min-width:2.4em;color:var(--ink-3);font-weight:400}
+.post h2.big{font-size:clamp(26px,3vw,38px);line-height:1;letter-spacing:-.015em;margin-top:160px}
+.post pre{direction:ltr;text-align:left;margin:20px 0 0;padding:16px 18px;background:#111;border:1px solid var(--line);overflow-x:auto;
+  font:12px/1.75 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#d8d8d8}
+.post details{margin-top:20px;font-size:12.5px}
+.post summary{cursor:pointer;color:var(--ink-2);list-style:none}
+.post summary::-webkit-details-marker{display:none}
+.post summary::before{content:"+ "}
+.post details[open] summary::before{content:"− "}
+.post summary:hover{color:var(--ink)}
+.post .facts{display:grid;grid-template-columns:auto 1fr;gap:4px 18px;margin:20px 0 0;font-size:12.5px}
+.post .facts dt{color:var(--ink-2)}
+.post .facts dd{margin:0}
 .rv{opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.8,.3,1)}
 .rv.in{opacity:1;transform:none}
 .contact .lbl{display:inline-block;min-width:64px;color:var(--ink-2)}
@@ -223,7 +250,81 @@ const EX = [
     {h:'ההגשה', html:`<p>התיק מוצב על שולחן בכיתה, והאורח מכניס את המפתח למנעול.</p>`,
       media:{video:'media/presentation.mp4', poster:'media/presentation.jpg', cap:'ההצגה בכיתה'}}
   ]},
-  {n:'02', title:'סיכת דש', kind:'בקרוב'},
+  {n:'02', slug:'pin', title:'סיכת דש', kind:'תרגיל 2', numbered:true, cover:'media/pin-6459.jpg', sections:[
+    {h:'סיכת דש', head:true, html:`<p>תג שם שאומר שלום.<br>סיכת דש שבניתי לאיילה: כשמנופפים מול התג, הוא מרגיש את הצל של היד ואומר בקול „אני איילה, שלום”.</p>`},
+    {h:'הבריף', html:`<p>המשימה הייתה לעצב לזוג שלך סיכת דש אינטראקטיבית: אביזר לביש עם מסר דיגיטלי אישי, שבנוי רק ממה שכבר יש על המיקרו:ביט, כלומר הכפתורים, החיישנים, גריד הלדים והרמקול.</p>
+      <dl class="facts"><dt>זמן</dt><dd>שבוע אחד</dd><dt>בשביל</dt><dd>איילה</dd><dt>כלים</dt><dd>מיקרו:ביט V2 בלבד, בלי רכיבים נוספים</dd></dl>`},
+    {h:'נקודת המוצא', html:`<p>רציתי ליצור מכשיר שמייצר תקשורת חברית עם מי שבא איתו במגע. איילה סיפרה שהיא מאוד אוהבת אנשים, ולכן הלכתי לכיוון של יצירת קשר: שיח, דיבור והיכרות. הדבר הראשון שאומרים כשמכירים מישהו הוא שלום, ואת השם.</p>`},
+    {h:'ללמד את המיקרו:ביט לדבר', html:`<p>הניסיונות הראשונים היו לגרום למיקרו:ביט לדבר. בבלוקים של MakeCode אין דיבור, אז עברתי לפייתון. גם שם ספריית הדיבור מכירה רק אנגלית, ולכן כתבתי לה את העברית באותיות לועזיות, לפי הצליל.</p>
+      <p>חלק מהניסיונות יצאו לא מובנים בעליל. אחרי הרבה פסיקים, מקפים ורווחים הגעתי לדיבור שבעיניי היה מספק. המקפים מאריכים את התנועות ונותנים למשפט הטעמה:</p>
+      <pre>speech.say("a- nee-- a- ya- la--- sha- lom")</pre>`,
+      media:{row:[
+        {video:'media/pin-6352.mp4', poster:'media/pin-6352.jpg', cap:'כיסוי באצבע'},
+        {img:'media/pin-6351.jpg', alt:'המיקרו:ביט מחובר בכבל, הלדים דולקים'}], v:true}},
+    {h:'נפנוף מטיל צל', html:`<p>נפנוף הרגיש לי כמו הפעולה המתאימה ביותר לפלט הרצוי. אתה מנפנף, ובהלימה למציאות מקבל ברכת שלום בחזרה. פעולת הנפנוף גם מטילה צל על החיישן, וכך אפשר היה להיעזר בה כדי להפעיל את הדיבור.</p>`,
+      media:{video:'media/pin-6354.mp4', poster:'media/pin-6354.jpg', tall:true, cap:'נפנוף מעל הלוח'}},
+    {h:'איפה בדיוק החיישן?', html:`<p>הבעיה: איך אני גורם לחיישן האור להישאר חשוף? היכן בדיוק הוא נמצא, וכמה חסימה משפיעה עליו? ניסיתי לבדוק את העניין בהסתרה של החיישן עם דפים מסביב, כדי לקבל תשובות.</p>`,
+      media:{row:[
+        {img:'media/pin-6355.jpg', alt:'הלוח מכוסה בדפים, רק פס צר חשוף'},
+        {img:'media/pin-6356.jpg', alt:'הלוח בין דפים ונרתיק תג שקוף על השולחן'}], land:true}},
+    {h:'כיול לפי החדר', html:`<p>צל של נפנוף הוא שינוי עדין, והוא תלוי בכמה אור יש בחדר. לכן הוספתי כיול: בלחיצה על כפתור A המיקרו:ביט מודד את האור בחדר וקובע לעצמו נקודת בסיס.</p>
+      <p>מעבר לזה, הקוד מסנן את ההבהוב של נורות התקרה, מתעדכן לאט כשהחדר מחשיך לקראת ערב, ונועל את הדיבור אחרי כל „שלום” עד שהיד זזה, כדי שהתג לא יחזור על עצמו.</p>
+      <details><summary>הקוד המלא</summary><pre>from microbit import *
+import speech
+
+def get_clean_light():
+    high = 0
+    for _ in range(5):
+        v = display.read_light_level()
+        if v &gt; high:
+            high = v
+        sleep(10)
+    return high
+
+sleep(500)
+baseline = get_clean_light()
+can_speak = True
+
+while True:
+    if button_a.was_pressed():
+        baseline = get_clean_light()
+        display.scroll(str(baseline))
+
+    current = get_clean_light()
+    drop_needed = max(8, baseline * 0.20)
+
+    if baseline &gt; 10 and current &lt; (baseline - drop_needed) and can_speak:
+        speech.say("a- nee-- a- ya- la--- sha- lom")
+        can_speak = False
+        sleep(1500)
+    elif current &gt;= (baseline - drop_needed * 0.5):
+        can_speak = True
+        baseline = (baseline * 0.95) + (current * 0.05)
+
+    sleep(50)</pre></details>`,
+      media:{video:'media/pin-6353.mp4', poster:'media/pin-6353.jpg', cap:'כל נפנוף, „שלום” אחד'}},
+    {h:'מנרתיק לכרטיס', html:`<p>מדדתי את המרווח משולי התג כדי לקבוע את הגודל לקראת הדפסה, וניסיתי להכניס את הלוח לתוך נרתיק תג שקוף. הפלסטיק יצר השתקפויות על חיישן האור והיה קשה לשלב בו את בית הסוללות, אז עברתי לכרטיס קשיח בלי נרתיק.</p>`,
+      media:{row:[
+        {img:'media/pin-6448.jpg', alt:'מדידה בסרגל של הלוח בתוך נרתיק התג'},
+        {img:'media/pin-6449.jpg', alt:'הלוח ובית הסוללות על כרטיס, עם קליפס השרוך'},
+        {img:'media/pin-6450.jpg', alt:'כרטיס לבן ריק עם קליפס, בית הסוללות מאחור'}],
+        cap:'מדידת המרווח משולי התג, וניסיונות להכניס את הלוח לנרתיק פלסטיק'}},
+    {h:'מידות וגרפיקה', html:`<p>הכרטיס בגודל A7 לאורך, 74×105 מ״מ, עם שוליים שמסתירים את האלקטרוניקה והחיווט. במקום חלון מרובע גדול, בדיקה הראתה שחריץ צר של 2×1 ס״מ מספיק לחיישן, והוא משתלב בגרפיקה: תמונה של איילה והמשפט שהתג אומר.</p>
+      <p>כדי שיהיה טריגר שמכוון את מי שעומד מולה, הוספתי ליד המשפט אייקון של יד מנופפת. ככה כבר מהכיתוב ברור מה לעשות.</p>`,
+      media:{row:[
+        {img:'media/pin-6455.jpg', alt:'הדפסות ניסיון של התג בגדלים שונים על משטח חיתוך'},
+        {img:'media/pin-6454.jpg', alt:'הכרטיס המודפס מוחזק מול הלוח'}],
+        cap:'ניסיונות מדידה ובדיקה של גדלים'}},
+    {h:'מה שמאחור', html:`<p>הדבקתי שני כרטיסים במשקל 300 גרם זה על זה, כדי שיחזיקו את המנגנון מאחור. המיקרו:ביט מקובע במרכז הגב במסקינטייפ, בלי לחסום את הרמקול, ובית הסוללות מודבק בדבק חם לרוחב התחתית.</p>
+      <p>המשקל של הסוללות מייצב את התג על החזה ושומר שלא יתהפך, וכפתור A ומתג ההפעלה נשארים בהישג יד.</p>`,
+      media:{img:'media/pin-6458.jpg', alt:'גב התג: בית הסוללות מודבק בתחתית, הלוח מקובע בסרט'}},
+    {h:'ההגשה', big:true, html:`<p>איילה ענדה את התג בכיתה. מי שנופף לה לשלום, שמע אותה מציגה את עצמה.</p>`,
+      media:[
+        {row:[
+          {img:'media/pin-6459.jpg', cap:'התג המוגמר', alt:'תג השם המוגמר על שרוך: תמונה של איילה, חריץ קטן לחיישן והכיתוב אני איילה, שלום'},
+          {video:'media/pin-6468.mp4', poster:'media/pin-6468.jpg', cap:'נפנוף, ו„אני איילה, שלום”'}], v:true},
+        {video:'media/pin-presentation.mp4', poster:'media/pin-presentation.jpg', cap:'ההגשה בכיתה'}]}
+  ]},
   {n:'03', title:'תרגיל 3', kind:'בקרוב'},
   {n:'04', title:'תרגיל סיום', kind:'בקרוב'}
 ];
@@ -485,18 +586,27 @@ $('#works').innerHTML = EX.map((x, i) => x.sections
   : `<li><span class="w off"><span class="t">${x.title}</span></span></li>`).join('');
 $('#works').addEventListener('click', (e) => { const a = e.target.closest('a[data-i]'); if (a) { e.preventDefault(); openEx(+a.dataset.i); } });
 
+function fig(m, rv){
+  const c = m.cap ? `<figcaption>${m.cap}</figcaption>` : '';
+  if (m.img) return `<figure class="fig ${rv}${m.tall ? ' tall' : ''}"><img src="${m.img}" alt="${m.alt || ''}" loading="lazy">${c}</figure>`;
+  return `<figure class="fig ${rv}${m.tall ? ' tall' : ''}"><video src="${m.video}" poster="${m.poster}" playsinline preload="metadata" controls ${m.loop ? 'muted loop' : ''}></video>${c}</figure>`;
+}
 function media(m){
   if (!m) return '';
-  if (m.img) return `<figure class="fig rv"><img src="${m.img}" alt="${m.alt || ''}" loading="lazy"></figure>`;
-  return `<figure class="fig rv ${m.tall ? 'tall' : ''}"><video src="${m.video}" poster="${m.poster}" playsinline preload="metadata" controls ${m.loop ? 'muted loop' : ''}></video>${m.cap ? `<figcaption>${m.cap}</figcaption>` : ''}</figure>`;
+  if (Array.isArray(m)) return m.map(media).join('');
+  if (m.row) return `<div class="row rv${m.note ? ' noted' : ''}${m.snug ? ' snug' : ''}${m.land ? ' land' : ''}${m.v ? ' v' : ''}" style="--n:${m.row.length}">${m.row.map(x => fig(x, '')).join('')}${m.note ? `<p class="note">${m.note}</p>` : ''}${m.cap ? `<p class="rowcap">${m.cap}</p>` : ''}</div>`;
+  return fig(m, 'rv');
 }
 let io;
 function openEx(i){
   const x = EX[i], [head, ...rest] = x.sections;
   post.innerHTML = `<p class="eyebrow">${x.kind}</p><h1>${x.title}</h1><div class="lede">${head.html}</div>${media(head.media)}`
-    + rest.map(s => s.media && s.media.side
-      ? `<div class="split"><div class="rv"><h2>${s.h}</h2>${s.html}</div>${media(s.media)}</div>`
-      : `<h2 class="rv">${s.h}</h2><div class="rv">${s.html}</div>${media(s.media)}`).join('');
+    + rest.map((s, j) => {
+      const h = `${x.numbered && !s.big ? `<span class="no">${String(j + 1).padStart(2, '0')}</span>` : ''}${s.h}`;
+      return s.media && s.media.side
+        ? `<div class="split"><div class="rv"><h2>${h}</h2>${s.html}</div>${media(s.media)}</div>`
+        : `<h2 class="rv${s.big ? ' big' : ''}">${h}</h2><div class="rv">${s.html}</div>${media(s.media)}`;
+    }).join('');
   home.hidden = true; ct.hidden = true; ex.hidden = false; scrollTo(0, 0);
   setHash(x.slug);
   io && io.disconnect();
@@ -520,7 +630,7 @@ function closeCt(){ ct.hidden = true; home.hidden = false; scrollTo(0, 0); layou
 $('#ctBack').addEventListener('click', closeCt);
 document.addEventListener('keydown', (e) => { if (e.key !== 'Escape') return; if (!ex.hidden) closeEx(); else if (!ct.hidden) closeCt(); });
 
-/* =================== direct links (#doorbell, #contact) =================== */
+/* =================== direct links (#doorbell, #pin, #contact) =================== */
 // each page has its own address, so a link can skip the opening and land right on it
 function setHash(h){
   const want = h ? '#' + h : '';
